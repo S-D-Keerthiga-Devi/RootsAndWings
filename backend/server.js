@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import userRoutes from './routes/userRoutes.js';
 import adoptionRoutes from './routes/AdoptionRoutes.js';
+import router from './routes/rootsRoutes.js';
 
 // Initialize dotenv to load .env variables
 dotenv.config();
@@ -38,6 +39,8 @@ app.get('/', (req, res) => {
 });
 app.use('/api/users', userRoutes);
 app.use('/api/adoption', adoptionRoutes);
+
+app.use('/api/roots', router);
 
 // Start Server
 const PORT = process.env.PORT || 5000;

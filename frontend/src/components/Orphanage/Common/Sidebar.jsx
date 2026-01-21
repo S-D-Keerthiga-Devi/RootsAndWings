@@ -1,8 +1,13 @@
 import React from 'react';
 import { UserButton, useUser } from "@clerk/clerk-react";
+import { Link, useLocation } from 'react-router-dom'; // 1. Import Link & Hook
 
 export default function Sidebar({ isOpen, setIsOpen }) {
   const { user } = useUser();
+  const location = useLocation(); // 2. Get current URL path
+
+  // Helper to close sidebar on mobile when a link is clicked
+  const handleNavClick = () => setIsOpen(false);
 
   return (
     <aside className={`
@@ -28,14 +33,51 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
         
-        {/* Navigation Buttons */}
+        {/* Navigation Links */}
+        {/* 3. Added 'to' paths and passed current location for styling */}
         <nav className="flex flex-col gap-1.5">
-          <NavItem icon="dashboard" label="Overview" active />
-          <NavItem icon="calendar_month" label="Visit Scheduler"  />
-          <NavItem icon="potted_plant" label="Plant Manager" />
-          <NavItem icon="inventory_2" label="Inventory" />
-          <NavItem icon="groups" label="Events & Requests" />
-          <NavItem icon="volunteer_activism" label="Donor Relations" />
+          <NavItem 
+            to="/orphanage-dashboard" 
+            icon="dashboard" 
+            label="Overview" 
+            currentPath={location.pathname}
+            onClick={handleNavClick}
+          />
+          <NavItem 
+            to="/visit-scheduler" 
+            icon="calendar_month" 
+            label="Visit Scheduler" 
+            currentPath={location.pathname}
+            onClick={handleNavClick}
+          />
+          <NavItem 
+            to="/plant-dashboard" 
+            icon="potted_plant" 
+            label="Plant Manager" 
+            currentPath={location.pathname}
+            onClick={handleNavClick}
+          />
+          <NavItem 
+            to="/inventory-dashboard" 
+            icon="inventory_2" 
+            label="Inventory" 
+            currentPath={location.pathname}
+            onClick={handleNavClick}
+          />
+          <NavItem 
+            to="/admin/events" 
+            icon="groups" 
+            label="Events & Requests" 
+            currentPath={location.pathname}
+            onClick={handleNavClick}
+          />
+          <NavItem 
+            to="/admin/donors" 
+            icon="volunteer_activism" 
+            label="Donor Relations" 
+            currentPath={location.pathname}
+            onClick={handleNavClick}
+          />
         </nav>
       </div>
 
@@ -51,16 +93,23 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   );
 }
 
-function NavItem({ icon, label, active = false }) {
+// 4. Updated NavItem to use Link instead of button
+function NavItem({ to, icon, label, currentPath, onClick }) {
+  // Check if this link is active
+  const isActive = currentPath === to;
+
   return (
-    <button className={`
+    <Link 
+      to={to} 
+      onClick={onClick}
+      className={`
       flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-left w-full
-      ${active 
-        ? 'bg-white/20 text-white shadow-lg' 
-        : 'text-white/70 hover:bg-white/10 hover:text-white'}
+      ${isActive 
+        ? 'bg-white/20 text-white shadow-lg font-bold' 
+        : 'text-white/70 hover:bg-white/10 hover:text-white font-semibold'}
     `}>
       <span className="material-symbols-outlined text-[20px]">{icon}</span>
-      <span className="text-sm font-semibold">{label}</span>
-    </button>
+      <span className="text-sm">{label}</span>
+    </Link>
   );
 }
